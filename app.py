@@ -4,7 +4,7 @@ app = Flask(__name__, static_folder='frontend/build')
 
 @app.route('/')
 def main_page():
-    return 'Main Page'
+    return 'Home page'
 
 @app.route('/helloworld')
 def serve():
