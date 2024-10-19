@@ -1,16 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello World</title>
-  <!-- Add custom meta tags or other head elements here -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
-  <div id="root"></div>
-  <!-- You can add static content here, such as a footer or scripts -->
-  <footer>
-    <h1>Hello World!</h1>
-  </footer>
+    <h1>Library System</h1>
+    
+    <!-- Form to Add New Book -->
+    <form id="addBookForm">
+        <label for="title">Book Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="author">Author:</label>
+        <input type="text" id="author" name="author" required>
+        
+        <button type="submit">Add Book</button>
+    </form>
+    
+    <!-- Table to Display List of Books -->
+    <table id="booksTable">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows for books will be added here dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        // Sample data for books (can be connected to your backend later)
+        let books = [];
+
+        // Handle form submission to add a new book
+        document.getElementById('addBookForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent form from refreshing the page
+
+            // Get book details from the form
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+
+            // Add new book to the books array
+            books.push({ title, author });
+
+            // Clear form inputs
+            document.getElementById('title').value = '';
+            document.getElementById('author').value = '';
+
+            // Update the book table UI
+            updateBooksTable();
+        });
+
+        // Function to update the book table
+        function updateBooksTable() {
+            const tableBody = document.querySelector('#booksTable tbody');
+            tableBody.innerHTML = '';  // Clear the table first
+
+            // Add each book to the table
+            books.forEach((book, index) => {
+                const row = document.createElement('tr');
+                
+                const titleCell = document.createElement('td');
+                titleCell.textContent = book.title;
+                row.appendChild(titleCell);
+
+                const authorCell = document.createElement('td');
+                authorCell.textContent = book.author;
+                row.appendChild(authorCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
 </body>
 </html>
