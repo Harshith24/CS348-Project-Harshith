@@ -1,5 +1,6 @@
 from flask import Flask, send_from_directory, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 
 app = Flask(__name__, static_folder='frontend/build')
 
@@ -93,23 +94,35 @@ def report():
     book_name = request.args.get('book_name')
     all_books = request.args.get('all') == 'true'
     
-    # Query the database based on provided filters
-    query = Book.query
+    # If fetching all books, use ORM directly
     if all_books:
-        books = query.all()
+        books = Book.query.all()
+        #result = db.session.execute(text("CALL GetAllBooks()"))
     else:
+        # Start with a base query
+        query = "SELECT * FROM books WHERE 1=1"
+        params = {}
+
+        # Adding filtering conditions dynamically
         if category:
-            query = query.filter(Book.category == category)
+            query += " AND category = :category"
+            params['category'] = category
         if author:
-            query = query.filter(Book.author.ilike(f'%{author}%'))
+            query += " AND author = :author"
+            params['author'] = author
         if book_name:
-            query = query.filter(Book.title.ilike(f'%{book_name}%'))
-        books = query.all()
+            query += " AND title = :book_name"
+            params['book_name'] = book_name
+        
+        # Execute the prepared statement with parameters
+        result = db.session.execute(text(query), params)
+        books = result.fetchall()
 
     # Calculate the total count and availability of the filtered books
     total_count = len(books)
     total_available = sum(book.available for book in books)
 
+    # Format the report data
     report_data = {
         'books': [{'id': book.id, 'title': book.title, 'author': book.author, 
                    'category': book.category, 'available': book.available, 
