@@ -1,1 +1,4 @@
 .venv
+frontend_
+frontend/src
+getAllBooks.sql

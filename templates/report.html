@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Report</title>
+</head>
+<body>
+    <h2>Library Report</h2>
+
+    <!-- Display Total Counts -->
+    <p>Total Books: {{ report_data.total_count }}</p>
+    <p>Total Available: {{ report_data.available_count }}</p>
+
+    <!-- Display Filtered Books -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Available</th>
+                <th>Aisle</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in report_data.books %}
+            <tr>
+                <td>{{ book.id }}</td>
+                <td>{{ book.title }}</td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.category }}</td>
+                <td>{{ book.available }}</td>
+                <td>{{ book.aisle }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="/home"><button>Back to Home</button></a>
+</body>
+</html>
