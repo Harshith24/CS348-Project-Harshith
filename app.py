@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, request, jsonify, render_template
+from flask import Flask, send_from_directory, request, jsonify, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 
@@ -20,17 +20,56 @@ class Book(db.Model):
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    #id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(50), primary_key=True, unique=True, nullable=False)
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    age = db.Column(db.Integer, nullable=False)
+    password = db.Column(db.String(50), nullable=False)
 
 @app.route('/')
 def main_page():
     return 'Home page'
 
-@app.route('/home')
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+    if request.method == 'POST':
+        form_type = request.form.get('form_type')
+        
+        if form_type == 'login':
+            # Login form
+            user_id = request.form.get('login_user_id')
+            password = request.form.get('login_password')
+            user = User.query.filter_by(user_id=user_id).first()
+
+            if user and user.password == password:
+                return jsonify({'success': True, 'message': 'Login successful! Redirecting...'})
+            else:
+                return jsonify({'success': False, 'message': 'Invalid login credentials. Please try again.'})
+
+        elif form_type == 'register':
+            # Registration form
+            user_id = request.form.get('register_user_id')
+            first_name = request.form.get('first_name')
+            last_name = request.form.get('last_name')
+            age = request.form.get('age')
+            password = request.form.get('register_password')
+
+            # Check if the user ID already exists
+            if User.query.filter_by(user_id=user_id).first():
+                return jsonify({'success': False, 'message': 'User ID already exists! Please choose a different one.'})
+
+            # Create a new user
+            new_user = User(user_id=user_id, first_name=first_name, last_name=last_name, age=age, password=password)
+            db.session.add(new_user)
+            db.session.commit()
+            return jsonify({'success': False, 'message': 'Registration successful! Please log in.'})
+
+    return render_template('home.html')
+
+@app.route('/library')
+def library():
+    return send_from_directory(app.static_folder, 'library.html')
 
 @app.route('/add_book', methods=['POST'])
 def add_book():

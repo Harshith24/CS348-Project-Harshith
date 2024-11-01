@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Login and Registration</title>
+</head>
+<body>
+    <h2>Login</h2>
+    <form id="loginForm" action="{{ url_for('home') }}" method="post">
+        <input type="hidden" name="form_type" value="login">
+        <label>User ID:</label>
+        <input type="text" name="login_user_id" required><br>
+        <label>Password:</label>
+        <input type="password" name="login_password" required><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <h2>Register</h2>
+    <form id="registerForm" action="{{ url_for('home') }}" method="post">
+        <input type="hidden" name="form_type" value="register">
+        <label>User ID:</label>
+        <input type="text" name="register_user_id" required><br>
+        <label>First Name:</label>
+        <input type="text" name="first_name" required><br>
+        <label>Last Name:</label>
+        <input type="text" name="last_name" required><br>
+        <label>Age:</label>
+        <input type="number" name="age" required><br>
+        <label>Password:</label>
+        <input type="password" name="register_password" required><br>
+        <button type="submit">Register</button>
+    </form>
+
+    <script>
+        // Handle form submission and display response as a popup
+        async function handleFormSubmit(event, formId) {
+            event.preventDefault();
+            const form = document.getElementById(formId);
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: form.method,
+                body: formData
+            });
+    
+            const result = await response.json();
+            alert(result.message);
+            if (result.success && formId === 'loginForm') {
+                window.location.href = "{{ url_for('library') }}";
+            }
+        }
+    
+        document.getElementById('loginForm').onsubmit = (event) => handleFormSubmit(event, 'loginForm');
+        document.getElementById('registerForm').onsubmit = (event) => handleFormSubmit(event, 'registerForm');
+    </script>
+</body>
+</html>
