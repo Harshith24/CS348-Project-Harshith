@@ -26,6 +26,7 @@ class User(db.Model):
     last_name = db.Column(db.String(50), nullable=False)
     age = db.Column(db.Integer, nullable=False)
     password = db.Column(db.String(50), nullable=False)
+    type = db.Column(db.String(10), nullable=False) 
 
 @app.route('/')
 def main_page():
@@ -43,7 +44,10 @@ def home():
             user = User.query.filter_by(user_id=user_id).first()
 
             if user and user.password == password:
-                return jsonify({'success': True, 'message': 'Login successful! Redirecting...'})
+                if user.type == 'Librarian':
+                    return jsonify({'success': True, 'message': 'Login successful! Redirecting to library...', 'redirect_url': url_for('library')})
+                else:
+                    return jsonify({'success': True, 'message': 'Login successful! Redirecting to user page...', 'redirect_url': url_for('user')})
             else:
                 return jsonify({'success': False, 'message': 'Invalid login credentials. Please try again.'})
 
@@ -54,13 +58,14 @@ def home():
             last_name = request.form.get('last_name')
             age = request.form.get('age')
             password = request.form.get('register_password')
+            user_type = request.form.get('user_type')
 
             # Check if the user ID already exists
             if User.query.filter_by(user_id=user_id).first():
                 return jsonify({'success': False, 'message': 'User ID already exists! Please choose a different one.'})
 
             # Create a new user
-            new_user = User(user_id=user_id, first_name=first_name, last_name=last_name, age=age, password=password)
+            new_user = User(user_id=user_id, first_name=first_name, last_name=last_name, age=age, password=password, type=user_type)
             db.session.add(new_user)
             db.session.commit()
             return jsonify({'success': False, 'message': 'Registration successful! Please log in.'})
@@ -70,6 +75,11 @@ def home():
 @app.route('/library')
 def library():
     return send_from_directory(app.static_folder, 'library.html')
+
+@app.route('/user')
+def user():
+    # Render the user page where regular users can borrow, return, or browse books
+    return send_from_directory(app.static_folder, 'user.html')
 
 @app.route('/add_book', methods=['POST'])
 def add_book():
