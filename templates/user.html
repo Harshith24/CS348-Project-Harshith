@@ -72,15 +72,22 @@
         <button onclick="borrowBook()">Borrow Book</button>
     </div>
 
+    <div class="return-book">
+        <h3>Return a Book</h3>
+        <input type="text" id="returnBookId" placeholder="Enter Book ID">
+        <button onclick="returnBook()">Return Book</button>
+    </div>
+
     <!-- Borrowed Books Section -->
     <div class="borrowed-books">
         <h3>Books Borrowed</h3>
         <table id="borrowedBooksTable">
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>Book ID</th>
                     <th>Title</th>
                     <th>Borrow Date</th>
+                    <th>Return Date</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -175,8 +182,8 @@
 
         function fetchBorrowedBooks() {
             const userId = window.location.pathname.split('/')[2];
-            
-            fetch(`/borrowed_books/${userId}`) // Update the endpoint to include user_id
+
+            fetch(`/borrowed_books/${userId}`)
                 .then(response => response.json())
                 .then(data => {
                     const borrowedBooksTable = document.getElementById('borrowedBooksTable').getElementsByTagName('tbody')[0];
@@ -184,12 +191,34 @@
 
                     data.borrowed_books.forEach(book => {
                         const row = borrowedBooksTable.insertRow();
-                        row.insertCell(0).textContent = book.id;        // ID
-                        row.insertCell(1).textContent = book.title;     // Title
-                        row.insertCell(2).textContent = new Date(book.borrow_date).toLocaleDateString(); // Format date
+                        row.insertCell(0).textContent = book.id;
+                        row.insertCell(1).textContent = book.title;
+                        row.insertCell(2).textContent = new Date(book.borrow_date).toLocaleDateString();
+                        row.insertCell(3).textContent = book.return_date ? new Date(book.return_date).toLocaleDateString() : 'Not returned';
                     });
                 })
                 .catch(error => console.error('Error fetching borrowed books:', error));
+        }
+        
+        function returnBook() {
+            const bookId = document.getElementById('returnBookId').value;
+            const userId = window.location.pathname.split('/')[2];
+
+            fetch(`/return_book/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ book_id: bookId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    fetchBorrowedBooks(); // Update the borrowed books table
+                }
+            })
+            .catch(error => console.error('Error returning book:', error));
         }
 
 

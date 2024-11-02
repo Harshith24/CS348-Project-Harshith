@@ -184,11 +184,7 @@ def borrow_book(user_id, book_id):
         app.logger.warning('No copies available for borrowing.')
         return jsonify({'success': False, 'message': 'No copies available for borrowing.'}), 400
 
-    borrowed_book = BorrowedBook.query.filter_by(user_id=user_id, book_id=book_id).first()
-    if borrowed_book:
-        app.logger.warning('Book already borrowed.')
-        return jsonify({'success': False, 'message': 'Book already borrowed.'}), 400
-
+    # Record this specific borrow instance
     new_borrowed_book = BorrowedBook(user_id=user_id, book_id=book_id, book_title=book.title, borrow_date=datetime.now())
     db.session.add(new_borrowed_book)
 
@@ -202,27 +198,32 @@ def borrow_book(user_id, book_id):
 @app.route('/borrowed_books/<int:user_id>')
 def get_borrowed_books(user_id):
     borrowed_books = BorrowedBook.query.filter_by(user_id=user_id).all()
-    result = [{'id': book.book_id, 'title': book.book_title, 'borrow_date': book.borrow_date} for book in borrowed_books]
+    result = [{'id': book.book_id, 'title': book.book_title, 'borrow_date': book.borrow_date, 'return_date': book.return_date} for book in borrowed_books]
     return jsonify({'borrowed_books': result})
 
 # Route for returning a borrowed book
-# @app.route('/return_book/<int:book_id>', methods=['POST'])
-# def return_book(book_id):
-#     if 'username' not in session:
-#         return jsonify({"message": "Please log in to return books."}), 401
+@app.route('/return_book/<int:user_id>', methods=['POST'])
+def return_book(user_id):
+    data = request.get_json()
+    book_id = data.get('book_id')
 
-#     borrowed_record = BorrowedBook.query.filter_by(user_id=session['username'], book_id=book_id, return_date=None).first()
-#     if not borrowed_record:
-#         return jsonify({"message": "This book was not borrowed by you or is already returned."}), 400
+    # Fetch the borrowed book entry
+    borrowed_book = BorrowedBook.query.filter_by(user_id=user_id, book_id=book_id, return_date=None).first()
+    
+    if not borrowed_book:
+        return jsonify({'success': False, 'message': 'No record of this book being borrowed or it has already been returned.'})
 
-#     # Update the book's availability status and set return date
-#     book = find_book_by_id(book_id)
-#     if book:
-#         book.available = 'Yes'
-#         borrowed_record.return_date = datetime.utcnow()  # Set the return date to current date
-#         db.session.commit()
+    # Update the return date
+    borrowed_book.return_date = datetime.now()
 
-#     return jsonify({"message": f"You have successfully returned '{book.title}'."})
+    # Fetch the book entry and increment its availability
+    book = Book.query.filter_by(id=book_id).first()
+    if book:
+        book.available += 1  # Assuming 'available' tracks available copies
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Book returned successfully!'})
+    else:
+        return jsonify({'success': False, 'message': 'Book not found in the library.'})
 
 # Route to fetch all books borrowed by the current user
 # @app.route('/borrowed_books')
