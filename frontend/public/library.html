@@ -10,13 +10,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 50px;
+            margin-top: 20px;
         }
         .form-group {
             margin: 10px 0;
         }
         label {
             margin-right: 10px;
+        }
+        .book-list, .borrowed-books {
+            width: 80%;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
@@ -121,6 +136,32 @@
     <button type="button" onclick="viewReport()">View Report</button>
     <button onclick="viewAllBooks()">View All Books</button>
     <a href="/home"><button>Back to Home</button></a>
+
+    <br> <br>
+
+    <!-- Borrow Book Section -->
+    <h3>Borrow a Book</h3>
+    <div>
+        <label for="bookIdToBorrow">Book ID:</label>
+        <input type="number" id="bookIdToBorrow" placeholder="Enter book ID">
+        <button onclick="borrowBook()">Borrow Book</button>
+    </div>
+
+    <!-- Borrowed Books Section -->
+    <div class="borrowed-books">
+        <h3>Books Borrowed</h3>
+        <table id="borrowedBooksTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Borrow Date</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
 
     <!-- Script for handling form submissions -->
     <script>
@@ -241,6 +282,53 @@
         document.addEventListener('DOMContentLoaded', () => {
             populateCategories();
         });
+
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     // Get user ID from the URL query parameters
+        //     const params = new URLSearchParams(window.location.search);
+        //     const userId = params.get('user_id'); // Ensure this matches your earlier implementation
+
+        //     // Store userId in a variable or use it directly
+        //     window.userId = userId; // Store for later use
+        //     fetchBorrowedBooks(); // Call to fetch borrowed books if needed
+        // });
+
+        // // Borrow a book by ID
+        // function borrowBook() {
+        //     const bookId = document.getElementById('bookIdToBorrow').value;
+
+        //     // Get userId from the URL
+        //     const userId = window.location.pathname.split('/')[2]; // Assuming the URL is like '/user/<user_id>'
+
+        //     fetch(`/borrow_book/${userId}/${bookId}`, { method: 'POST' })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             alert(data.message);
+        //             if (data.success) {
+        //                 fetchBorrowedBooks(); // Update the borrowed books table
+        //             }
+        //         })
+        //         .catch(error => console.error('Error borrowing book:', error));
+        // }
+
+        // function fetchBorrowedBooks() {
+        //     const userId = window.location.pathname.split('/')[2];
+            
+        //     fetch(`/borrowed_books/${userId}`) // Update the endpoint to include user_id
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             const borrowedBooksTable = document.getElementById('borrowedBooksTable').getElementsByTagName('tbody')[0];
+        //             borrowedBooksTable.innerHTML = ''; // Clear existing rows
+
+        //             data.borrowed_books.forEach(book => {
+        //                 const row = borrowedBooksTable.insertRow();
+        //                 row.insertCell(0).textContent = book.id;        // ID
+        //                 row.insertCell(1).textContent = book.title;     // Title
+        //                 row.insertCell(2).textContent = new Date(book.borrow_date).toLocaleDateString(); // Format date
+        //             });
+        //         })
+        //         .catch(error => console.error('Error fetching borrowed books:', error));
+        // }
     </script>
 </body>
 </html>
