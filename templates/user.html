@@ -64,7 +64,6 @@
     <a href="/home"><button>Back to Home</button></a>
 
 
-    <!-- Borrow Book Section -->
     <h3>Borrow a Book</h3>
     <div>
         <label for="bookIdToBorrow">Book ID:</label>
@@ -78,7 +77,6 @@
         <button onclick="returnBook()">Return Book</button>
     </div>
 
-    <!-- Borrowed Books Section -->
     <div class="borrowed-books">
         <h3>Books Borrowed</h3>
         <table id="borrowedBooksTable">
@@ -122,14 +120,13 @@
                 .then(response => response.json())
                 .then(data => {
                     const categoryDropdown = document.getElementById('browseCategory');
-                    categoryDropdown.innerHTML = ''; // Clear any existing options
+                    categoryDropdown.innerHTML = ''; 
 
                     const option = document.createElement('option');
                     option.value = '';
                     option.textContent = "Select a Category";
                     categoryDropdown.appendChild(option);
 
-                    // Populate dropdown with categories from the response
                     data.categories.forEach(category => {
                         const option = document.createElement('option');
                         option.value = category;
@@ -140,41 +137,36 @@
                 .catch(error => console.error('Error fetching categories:', error));
         }
 
-        // Function to generate the report based on the selected category
         function generateReport() {
             const selectedCategory = document.getElementById('browseCategory').value;
             const url = `/report?category=${encodeURIComponent(selectedCategory)}`;
-            window.location.href = url;  // Redirect to the report page with the selected category
+            window.location.href = url;  
         }
 
-        // Populate categories on page load
         document.addEventListener('DOMContentLoaded', () => {
             populateCategories();
         });
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Get user ID from the URL query parameters
             const params = new URLSearchParams(window.location.search);
-            const userId = params.get('user_id'); // Ensure this matches your earlier implementation
+            const userId = params.get('user_id'); 
 
-            // Store userId in a variable or use it directly
-            window.userId = userId; // Store for later use
-            fetchBorrowedBooks(); // Call to fetch borrowed books if needed
+            window.userId = userId; 
+            fetchBorrowedBooks(); 
         });
 
-        // Borrow a book by ID
+
         function borrowBook() {
             const bookId = document.getElementById('bookIdToBorrow').value;
 
-            // Get userId from the URL
-            const userId = window.location.pathname.split('/')[2]; // Assuming the URL is like '/user/<user_id>'
+            const userId = window.location.pathname.split('/')[2]; 
 
             fetch(`/borrow_book/${userId}/${bookId}`, { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
                     alert(data.message);
                     if (data.success) {
-                        fetchBorrowedBooks(); // Update the borrowed books table
+                        fetchBorrowedBooks();
                     }
                 })
                 .catch(error => console.error('Error borrowing book:', error));
@@ -187,7 +179,7 @@
                 .then(response => response.json())
                 .then(data => {
                     const borrowedBooksTable = document.getElementById('borrowedBooksTable').getElementsByTagName('tbody')[0];
-                    borrowedBooksTable.innerHTML = ''; // Clear existing rows
+                    borrowedBooksTable.innerHTML = ''; 
 
                     data.borrowed_books.forEach(book => {
                         const row = borrowedBooksTable.insertRow();
@@ -220,43 +212,6 @@
             })
             .catch(error => console.error('Error returning book:', error));
         }
-
-
-        // Fetch the list of borrowed books
-        // function fetchBorrowedBooks() {
-        //     fetch('/borrowed_books')
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             const borrowedBooksTable = document.getElementById('borrowedBooksTable').getElementsByTagName('tbody')[0];
-        //             borrowedBooksTable.innerHTML = '';
-
-        //             data.borrowed_books.forEach(book => {
-        //                 const row = borrowedBooksTable.insertRow();
-        //                 row.insertCell(0).textContent = book.id;
-        //                 row.insertCell(1).textContent = book.title;
-
-        //                 // Return button for each borrowed book
-        //                 const returnCell = row.insertCell(2);
-        //                 const returnButton = document.createElement('button');
-        //                 returnButton.textContent = 'Return';
-        //                 returnButton.onclick = () => returnBook(book.id);
-        //                 returnCell.appendChild(returnButton);
-        //             });
-        //         })
-        //         .catch(error => console.error('Error fetching borrowed books:', error));
-        // }
-
-        // // Return a borrowed book by ID
-        // function returnBook(bookId) {
-        //     fetch(`/return_book/${bookId}`, { method: 'POST' })
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             alert(data.message);
-        //             fetchBooks(); // Update available books
-        //             fetchBorrowedBooks(); // Update borrowed books
-        //         })
-        //         .catch(error => console.error('Error returning book:', error));
-        // }
     </script>
 </body>
 </html>
