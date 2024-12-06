@@ -1,0 +1,17 @@
+runtime: python39  # Use Python 3.9 or another version you need
+
+env_variables:
+  DB_USER: root
+  DB_PASSWORD: Saina%4028  # Your encoded password
+  DB_HOST: /cloudsql/cs348-437004:us-central1:lib  # Use the Cloud SQL instance connection name
+  DB_NAME: library_management
+
+entrypoint: gunicorn -b :$PORT app:app
+
+instance_class: F2  # Cheapest instance for small projects
+
+handlers:
+  - url: /static
+    static_dir: static
+  - url: /.*  # This should route all other requests to the app
+    script: auto
