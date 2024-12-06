@@ -1,5 +1,6 @@
 .venv
 frontend_
-frontend/src
+frontend
 getAllBooks.sql
 .gcloudignore
+__pycache__
