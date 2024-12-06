@@ -5,11 +5,11 @@ from sqlalchemy import text
 from datetime import datetime
 import os
 
-app = Flask(__name__, static_folder='frontend/build')
+app = Flask(__name__)
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:Harshith**24@localhost/library_management'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:Saina%4028@34.132.5.146/library_management'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:Saina%4028@/library_management?unix_socket=/cloudsql/cs348-437004:us-central1:lib'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:pwd@localhost/library_management'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:pwd@IP/library_management'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:pwd@/library_management?unix_socket=/cloudsql/ID:us-central1:lib'
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
