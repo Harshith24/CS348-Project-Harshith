@@ -1,7 +1,7 @@
 import requests
 from concurrent.futures import ThreadPoolExecutor
 
-url = "http://127.0.0.1:5000/borrow_book/{user_id}/{book_id}"
+url = "https://cs348-437004.uc.r.appspot.com/borrow_book/{user_id}/{book_id}"
 
 def borrow_book_request(user_id, book_id):
     try:
@@ -16,5 +16,5 @@ def borrow_book_request(user_id, book_id):
 
 if __name__ == "__main__":
     with ThreadPoolExecutor() as executor:
-        executor.submit(borrow_book_request, 2, 3)
-        executor.submit(borrow_book_request, 3, 3) 
+        executor.submit(borrow_book_request, 2, 5)
+        executor.submit(borrow_book_request, 3, 5) 
