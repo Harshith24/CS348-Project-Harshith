@@ -2,7 +2,7 @@ runtime: python39  # Use Python 3.9 or another version you need
 
 env_variables:
   DB_USER: root
-  DB_PASSWORD: Saina%4028  # Your encoded password
+  DB_PASSWORD:  # Your encoded password
   DB_HOST: /cloudsql/cs348-437004:us-central1:lib  # Use the Cloud SQL instance connection name
   DB_NAME: library_management
 
